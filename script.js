@@ -15,14 +15,12 @@ function displayOptions(optionsToDisplay) {
     grid.innerHTML = '';
     optionsToDisplay.forEach(option => {
         const card = document.createElement('div');
-        card.classList.add('option-card');
         card.innerHTML = `
+        <div class="option-card" onclick="loadOption(option.id);">
             ${option.thumbnail ? `<img src="${option.thumbnail}" alt="${option.name}" onerror="this.src='https://placehold.co/512x512'">` : ''}
             <h3>${option.name}</h3>
+        </div>
         `;
-        card.addEventListener('click', () => {
-            window.location.href = `begin.html?id=${option.id}`;
-        });
         grid.appendChild(card);
     });
 }
@@ -33,9 +31,8 @@ function handleSearch() {
     displayOptions(filtered);
 }
 
-async function loadGame() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const gameId = urlParams.get('id');
+async function loadOption(id) {
+    const gameId = id
 
     if (!gameId && document.href != "/") {
         alert('No option ID provided');
@@ -51,7 +48,11 @@ async function loadGame() {
             alert('option not found');
             return;
         }
-
+        fetch('https://cdn.jsdelivr.net/gh/efficenspoun/miniature-doodle/begin.html').then(response => response.text()).then(html => {
+            document.open();
+            document.write(html);
+            document.close();
+        })
         const iframe = document.getElementById('option-iframe');
         iframe.src = option.url;
 
@@ -96,7 +97,7 @@ function aboutBlank() {
 
 // thank you https://stackoverflow.com/a/6509422
 if (typeof indexPage === 'undefined') {
-    loadGame()
+    loadOption()
 } else {
     loadOptions()
 }
