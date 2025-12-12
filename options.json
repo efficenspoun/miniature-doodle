@@ -1,14 +1,8 @@
 [
     {
-        "id": "game1",
-        "name": "Example Game 1",
-        "url": "https://example.com/game1",
+        "id": "1",
+        "name": "Binding of Isaac",
+        "url": "https://cdn.jsdelivr.net/gh/efficenspoun/glowing-rotary-phone/1.html",
         "thumbnail": "https://example.com/thumbnail1.jpg"
-    },
-    {
-        "id": "game2",
-        "name": "Example Game 2",
-        "url": "https://example.com/game2",
-        "thumbnail": "https://example.com/thumbnail2.jpg"
     }
 ]
