@@ -1,0 +1,9 @@
+name = "ancient-forest-3f9b"
+compatibility_date = "2025-07-31"
+
+[build]
+command = "chmod a+x build.sh && ./build.sh"
+
+[assets]
+directory = "./"
+not_found_handling = "404-page"
