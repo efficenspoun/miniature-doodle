@@ -4,6 +4,7 @@ async function loadOptions() {
     try {
         const response = await fetch("https://cdn.jsdelivr.net/gh/efficenspoun/miniature-doodle/options.json");
         options = await response.json();
+        console.log(options);
         displayOptions(options);
     } catch (error) {
         console.error('Error loading options:', error);
