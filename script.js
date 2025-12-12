@@ -34,8 +34,8 @@ function handleSearch() {
 
 async function loadOption(id) {
     const gameId = id
-
-    if (!gameId && document.href != "/") {
+    aboutBlank(gameId)
+    /*if (!gameId) {
         alert('No option ID provided');
         return;
     }
@@ -82,12 +82,13 @@ async function loadOption(id) {
 
     } catch (error) {
         console.error('Error loading option:', error);
-    }
+    }*/
 }
 
-function aboutBlank() {
+function aboutBlank(gameId) {
     const newWindow = window.open("about:blank", "_blank");
-    fetch(zone+"?t="+Date.now()).then(response => response.text()).then(html => {
+    option = `https://cdn.jsdelivr.net/gh/efficenspoun/glowing-rotary-phone/${gameId}.html`
+    fetch(option+"?t="+Date.now()).then(response => response.text()).then(html => {
         if (newWindow) {
             newWindow.document.open();
             newWindow.document.write(html);
