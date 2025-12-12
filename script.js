@@ -17,7 +17,7 @@ function displayOptions(optionsToDisplay) {
     optionsToDisplay.forEach(option => {
         const card = document.createElement('div');
         card.innerHTML = `
-        <div class="option-card" onclick="loadOption(${option.id})">
+        <div class="option-card" onclick="loadOption(1)">
             ${option.thumbnail ? `<img src="${option.thumbnail}" alt="${option.name}" onerror="this.src='https://placehold.co/512x512'">` : ''}
             <h3>${option.name}</h3>
         </div>
