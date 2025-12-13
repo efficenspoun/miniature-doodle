@@ -17,7 +17,7 @@ function displayOptions(optionsToDisplay) {
     optionsToDisplay.forEach(option => {
         const card = document.createElement('div');
         card.innerHTML = `
-        <div class="option-card" onclick="loadOption(1)">
+        <div class="option-card" onclick="loadOption(${option.id})">
             ${option.thumbnail ? `<img src="${option.thumbnail}" alt="${option.name}" onerror="this.src='https://placehold.co/512x512'">` : ''}
             <h3>${option.name}</h3>
         </div>
@@ -34,8 +34,7 @@ function handleSearch() {
 
 async function loadOption(id) {
     const gameId = id
-    aboutBlank(gameId)
-    /*if (!gameId) {
+    if (!gameId) {
         alert('No option ID provided');
         return;
     }
@@ -82,7 +81,7 @@ async function loadOption(id) {
 
     } catch (error) {
         console.error('Error loading option:', error);
-    }*/
+    }
 }
 
 function aboutBlank(gameId) {
