@@ -31,42 +31,67 @@ function handleSearch() {
 }
 
 async function getOption(id) {
-    const res = await fetch(`https://cdn.jsdelivr.net/gh/efficenspoun/glowing-rotary-phone/${id}.html`)
+    const res = await fetch(`https://cdn.jsdelivr.net/gh/efficenspoun/glowing-rotary-phone/${id}.html`);
     const html = await res.text();
-    return html
+    const iframe = document.getElementById('option-iframe');
+    if (!iframe) return console.error('Iframe has not been created yet');
+    try {
+        iframe.contentDocument.open();
+        iframe.contentDocument.write(html);
+        iframe.contentDocument.close();
+    } catch (e) {
+        console.error('Failed to write into iframe for option', id, e);
+    }
 }
 async function begin(id) {
     if (!id) {
         alert('No option ID provided');
         return;
     }
-
-    const url = new URL(window.location);
+    
+    // i am testing something
+    /**const url = new URL(window.location);
     url.searchParams.set("id",id);
-    window.history.replaceState({}, "", url);
+    window.history.replaceState({}, "", url);**/
 
     try {
         const response = await fetch('https://cdn.jsdelivr.net/gh/efficenspoun/miniature-doodle/options.json');
         const options = await response.json();
-        console.log(id)
         const option = options.find(g => g.id == id);
         if (!option) {
             alert('Option not found');
             return;
         }
-
         const html = await fetch('https://cdn.jsdelivr.net/gh/efficenspoun/miniature-doodle/begin.html').then(res => res.text());
+        try {
+            document.open();
+            document.write(html);
+            document.close();
+        } catch (e) {
+            console.warn('Top-level document.write failed, falling back to a full-screen iframe.', e);
+            // Clear the existing body and create a full-screen iframe so the fetched HTML
+            // can be written using document.write() in the iframe (keeps using document.write)
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.inset = '0';
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.style.border = '0';
+            iframe.style.zIndex = '9999';
+            // preserve minimal background while replacing
+            document.documentElement.innerHTML = '';
+            document.body = document.createElement('body');
+            document.body.appendChild(iframe);
+            try {
+                iframe.contentDocument.open();
+                iframe.contentDocument.write(html);
+                iframe.contentDocument.close();
+            } catch (err) {
+                console.error('Fallback iframe document.write also failed', err);
+                alert('Failed to open option — this browser blocked the operation.');
+            }
+        }
 
-        document.open();
-        document.write(html);
-        document.close();
-
-        const iframe = document.getElementById('option-iframe');
-        const optionHTML = await getOption(id);
-
-        iframe.contentDocument.open();
-        iframe.contentDocument.write(optionHTML);
-        iframe.contentDocument.close();
     } catch (error) {
         console.error('Error beginning option:', error);
     }
