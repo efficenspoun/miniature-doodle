@@ -20,9 +20,9 @@
 
     <div class="option-player">
         <div class="controls">
-            <button id="fullscreen-btn">Fullscreen</button>
+            <button id="fullscreen-btn" onclick="fullscreen()">Fullscreen</button>
             <button id="refresh-btn">Refresh</button>
-            <button id="open-direct-btn">Open Directly</button>
+            <button id="open-direct-btn" onclick="const params = new URLSearchParams(window.location.search); id = params.get(`id`); aboutBlank(id);">Open Directly</button>
         </div>
         <iframe id="option-iframe" src="" frameborder="0"></iframe>
     </div>

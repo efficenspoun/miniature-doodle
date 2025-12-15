@@ -1,10 +1,8 @@
 let options = [];
-
 async function loadOptions() {
     try {
         const response = await fetch("https://cdn.jsdelivr.net/gh/efficenspoun/miniature-doodle/options.json");
         options = await response.json();
-        console.log(options);
         displayOptions(options);
     } catch (error) {
         console.error('Error loading options:', error);
@@ -17,7 +15,7 @@ function displayOptions(optionsToDisplay) {
     optionsToDisplay.forEach(option => {
         const card = document.createElement('div');
         card.innerHTML = `
-        <div class="option-card" onclick="loadOption(${option.id})">
+        <div class="option-card" onclick="begin(${option.id})">
             ${option.thumbnail ? `<img src="${option.thumbnail}" alt="${option.name}" onerror="this.src='https://placehold.co/512x512'">` : ''}
             <h3>${option.name}</h3>
         </div>
@@ -32,61 +30,61 @@ function handleSearch() {
     displayOptions(filtered);
 }
 
-async function loadOption(id) {
-    const gameId = id
-    if (!gameId) {
+async function getOption(id) {
+    const res = await fetch(`https://cdn.jsdelivr.net/gh/efficenspoun/glowing-rotary-phone/${id}.html`)
+    const html = await res.text();
+    return html
+}
+async function begin(id) {
+    if (!id) {
         alert('No option ID provided');
         return;
     }
 
+    const url = new URL(window.location);
+    url.searchParams.set("id",id);
+    window.history.replaceState({}, "", url);
+
     try {
         const response = await fetch('https://cdn.jsdelivr.net/gh/efficenspoun/miniature-doodle/options.json');
         const options = await response.json();
-        const option = options.find(g => g.id === gameId);
-
+        console.log(id)
+        const option = options.find(g => g.id == id);
         if (!option) {
-            alert('option not found');
+            alert('Option not found');
             return;
         }
-        fetch('https://cdn.jsdelivr.net/gh/efficenspoun/miniature-doodle/begin.html').then(response => response.text()).then(html => {
-            document.open();
-            document.write(html);
-            document.close();
-        })
+
+        const html = await fetch('https://cdn.jsdelivr.net/gh/efficenspoun/miniature-doodle/begin.html').then(res => res.text());
+
+        document.open();
+        document.write(html);
+        document.close();
+
         const iframe = document.getElementById('option-iframe');
-        iframe.src = option.url;
+        const optionHTML = await getOption(id);
 
-        // Fullscreen button
-        document.getElementById('fullscreen-btn').addEventListener('click', () => {
-            if (iframe.requestFullscreen) {
-                iframe.requestFullscreen();
-            } else if (iframe.mozRequestFullScreen) { 
-                iframe.mozRequestFullScreen();
-            } else if (iframe.webkitRequestFullscreen) { 
-                iframe.webkitRequestFullscreen();
-            } else if (iframe.msRequestFullscreen) { 
-                iframe.msRequestFullscreen();
-            }
-        });
-
-        // Refresh button
-        document.getElementById('refresh-btn').addEventListener('click', () => {
-            iframe.src = iframe.src; // Reloads the iframe
-        });
-
-        // Open directly button
-        document.getElementById('open-direct-btn').addEventListener('click', () => {
-            window.open(option.url, '_blank');
-        });
-
+        iframe.contentDocument.open();
+        iframe.contentDocument.write(optionHTML);
+        iframe.contentDocument.close();
     } catch (error) {
-        console.error('Error loading option:', error);
+        console.error('Error beginning option:', error);
     }
 }
-
-function aboutBlank(gameId) {
+function fullscreen() {
+    const iframe = document.getElementById('option-iframe');
+    // i literally just copied this from https://www.w3schools.com/howto/howto_js_fullscreen.asp
+    if (iframe.requestFullscreen) {
+        iframe.requestFullscreen();
+    } else if (iframe.webkitRequestFullscreen) { /* Safari */
+        iframe.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE11 */
+        iframe.msRequestFullscreen();
+    }
+}
+function aboutBlank(id) {
     const newWindow = window.open("about:blank", "_blank");
-    option = `https://cdn.jsdelivr.net/gh/efficenspoun/glowing-rotary-phone/${gameId}.html`
+    option = `https://cdn.jsdelivr.net/gh/efficenspoun/glowing-rotary-phone/${id}.html`
     fetch(option+"?t="+Date.now()).then(response => response.text()).then(html => {
         if (newWindow) {
             newWindow.document.open();
@@ -98,7 +96,7 @@ function aboutBlank(gameId) {
 
 // thank you https://stackoverflow.com/a/6509422
 if (typeof indexPage === 'undefined') {
-    loadOption()
+    begin()
 } else {
     loadOptions()
 }
